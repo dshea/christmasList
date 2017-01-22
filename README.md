@@ -34,7 +34,7 @@ cd christmasList
 This will select new parings and add them to the end of the history(adult.csv)
 file.
 
-`christmasList.py <history.csv> [numYears]`
+`usage: christmasList.py <history.csv> [numYears]`
 
 * history.csv - history file used to exclude recent pairings.
 * numYears(optional) - how many previous years to consider.  Default is
@@ -56,7 +56,8 @@ This file has the list of previous pairings. The first line is used as
 the list of people to pair.  The following lines are the pairings from
 previous years to exclude.  The program will append the new pairing to this file.
 
-* the first line is the people in the gift exchange
+* the first line is the people in the gift exchange. You must have this
+  line and the first column is ignored.
 * the first column is the year
 * the rest of the columns are the selections for the people in the
 first row for that year
