@@ -60,7 +60,7 @@
 #]
 
 families = []
-
+extraNames = []
 
 import random
 import sys
@@ -117,10 +117,24 @@ def possible_recipients(giver, participants, chosen, previous_years, families):
     return possible_recipients
 
 def verify_name(name):
-    """Is this name in one of the families.  Help check for typos in the data file."""
+    """
+    Is this name in one of the families or in the extraName file.
+    Helps check for typos in the data files.
+    """
+    nameFound = False
     for family in families:
         if name in family:
-            return True
+            nameFound = True
+    if nameFound:
+        return True
+
+    for extraLine in extraNames:
+        if name in extraLine:
+            nameFound = True
+    if nameFound:
+        return True
+
+    print name, "not in family.csv or extraName.csv"
     return False
 
 def readFamilies():
@@ -137,6 +151,21 @@ def readFamilies():
     for line in reader:
         if len(line) > 0:
             families.append(line)
+
+def readExtraNames():
+    """
+    read the extraNames CSV file into the extraName list.
+    names seperated by a comma.
+    """
+    global extraNames
+    
+    # open the CSV file
+    f = open("extraNames.csv", 'rbU')
+    reader = csv.reader(f)
+
+    for line in reader:
+        if len(line) > 0:
+            extraNames.append(line)
 
             
 
@@ -164,6 +193,9 @@ if __name__ == '__main__':
     # load the families list
     readFamilies()
 
+    # load the families list
+    readExtraNames()
+
     # open the history CSV file
     try:
         f = open(fileName, 'rbU')
@@ -184,7 +216,7 @@ if __name__ == '__main__':
     for dude in participants:
         if not verify_name(dude):
             need_to_die = True
-            print dude, 'is not in a family'
+            print dude, 'is not in familys.csv or the extraName.csv'
     if need_to_die:
         sys.exit(1)
 
@@ -208,7 +240,7 @@ if __name__ == '__main__':
         i = 0
         debug_fine("")
         for dude in line:
-            if dude not in participants:
+            if not verify_name(dude):
                 print dude, 'in file', fileName, 'is an illegal name'
                 sys.exit(1)
             previous_years[participants[i]].append(dude)
