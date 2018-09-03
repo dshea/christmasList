@@ -33,7 +33,7 @@
 #
 # first column is the year (not used in the program)
 # first row is the participants
-# all other rows are the past years matches in decreasing years
+# all other rows are the past years matches
 #
 # for example:
 #
@@ -47,19 +47,10 @@
 #
 #############
 
-
-#families = [
-#    ('Mike', 'Sherrol'),
-#    ('Tom', 'Patty','Michael Marie'),
-#    ('Kathy','Greg','Haley','Morgan'),
-#    ('Marie','Bo','Pierce','Sophie'),
-#    ('Don','Kari','Mallory','Jack','Jocelyn'),
-#    ('Bill'),
-#    ('Beth','Clay','Michael Robert','Melanie'),
-#    ('Jim','Gaby','Michael J','Maria')
-#]
-
+familiesFile = "families.csv"
 families = []
+
+extraNamesFile = "extraNames.csv"
 extraNames = []
 
 import random
@@ -118,7 +109,7 @@ def possible_recipients(giver, participants, chosen, previous_years, families):
 
 def verify_name(name):
     """
-    Is this name in one of the families or in the extraName file.
+    Is this name in one of the families or extraNames file.
     Helps check for typos in the data files.
     """
     nameFound = False
@@ -134,7 +125,7 @@ def verify_name(name):
     if nameFound:
         return True
 
-    print name, "not in family.csv or extraName.csv"
+    print name, "not in", familiesFile, "or", extraNamesFile
     return False
 
 def readFamilies():
@@ -145,7 +136,7 @@ def readFamilies():
     global families  
     
     # open the CSV file
-    f = open("families.csv", 'rbU')
+    f = open(familiesFile, 'rbU')
     reader = csv.reader(f)
 
     for line in reader:
@@ -160,14 +151,12 @@ def readExtraNames():
     global extraNames
     
     # open the CSV file
-    f = open("extraNames.csv", 'rbU')
+    f = open(extraNamesFile, 'rbU')
     reader = csv.reader(f)
 
     for line in reader:
         if len(line) > 0:
             extraNames.append(line)
-
-            
 
 def print_usage():
     print 'usage: ', sys.argv[0], ' <history_CSV_File> [#years]'
@@ -193,7 +182,7 @@ if __name__ == '__main__':
     # load the families list
     readFamilies()
 
-    # load the families list
+    # load the extraNames list
     readExtraNames()
 
     # open the history CSV file
