@@ -7,11 +7,10 @@ Christmas gift exchange pairs.  I finally updated the Python code to Python 3.
 ## Rules
 
 * give to a different person than the last numYears
-* partners can't be nuclear family members
+* pairs can't be nuclear family members
 * can't choose yourself
 * participants give one gift only
 * participants receive one gift only
-
 
 # Get a copy of the git repository
 
@@ -48,6 +47,14 @@ This file must be in the current working directory.
 * one family on a line
 * each member seperated by a comma (no spaces)
 
+## extraNames.csv
+
+This file contains names that are in the history file, but are no longer in the drawing.
+This file must be in the current working directory.  In the example history file adults.csv 
+"Mike" is no longer participating in the drawing.
+
+* each name seperated by a comma (no spaces)
+
 ## history.csv
 
 This file has the list of previous pairings. The first line is used as
@@ -58,4 +65,5 @@ previous years.  The program will append the new pairing to end of this file.
   line.  The first column is ignored.
 * the first column is the year
 * the rest of the columns are the selections for the people in the
-first row for that year.  Look at adults.csv as an example.
+first row for that year.  Look at adults.csv as an example.  In this file Mike was 
+removed in 2018 and Andria was added in 2020
