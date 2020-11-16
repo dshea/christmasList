@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 #############
 # This program is free software: you can redistribute it and/or modify
@@ -64,10 +64,12 @@ debug_fine_on = False
 from copy import copy
 
 def debug(msg):
-    if debug_on: print msg
+    if debug_on: 
+        print(msg)
 
 def debug_fine(msg):
-    if debug_fine_on: print msg
+    if debug_fine_on: 
+        print(msg)
 
 def possible_givers(participants, chosen):
     # rule 4 - participants give one gift only
@@ -112,20 +114,15 @@ def verify_name(name):
     Is this name in one of the families or extraNames file.
     Helps check for typos in the data files.
     """
-    nameFound = False
     for family in families:
         if name in family:
-            nameFound = True
-    if nameFound:
-        return True
+            return True
 
     for extraLine in extraNames:
         if name in extraLine:
-            nameFound = True
-    if nameFound:
-        return True
+            return True
 
-    print name, "not in", familiesFile, "or", extraNamesFile
+    print(name, "not in", familiesFile, "or", extraNamesFile)
     return False
 
 def readFamilies():
@@ -136,7 +133,7 @@ def readFamilies():
     global families  
     
     # open the CSV file
-    f = open(familiesFile, 'rbU')
+    f = open(familiesFile, 'r')
     reader = csv.reader(f)
 
     for line in reader:
@@ -151,20 +148,41 @@ def readExtraNames():
     global extraNames
     
     # open the CSV file
-    f = open(extraNamesFile, 'rbU')
+    f = open(extraNamesFile, 'r')
     reader = csv.reader(f)
 
     for line in reader:
         if len(line) > 0:
             extraNames.append(line)
 
+def makePreviousYears(participants, pickHistory):
+    # make dictionary of empty arrays
+    for dude in participants:
+        previous_years[dude] = []
+
+    # fill up the previous years dictionary
+    for line in pickHistory:
+        i = 0
+        debug_fine("")
+        for dude in line:
+            if dude:
+                if not verify_name(dude):
+                    print(dude, 'in file', fileName, 'is an illegal name')
+                    sys.exit(1)
+                previous_years[participants[i]].append(dude)
+            debug_fine("%s = %s" % (participants[i], dude))
+            i += 1
+
+    return previous_years
+
+
 def print_usage():
-    print 'usage: ', sys.argv[0], ' <history_CSV_File> [#years]'
+    print('usage: ', sys.argv[0], ' <history_CSV_File> [#years]')
 
 if __name__ == '__main__':
     chosen = []
     fileName = ''
-    num_years = 100
+    num_years = 20
     previous_years = {}
 
     if len(sys.argv) > 1:
@@ -187,27 +205,24 @@ if __name__ == '__main__':
 
     # open the history CSV file
     try:
-        f = open(fileName, 'rbU')
+        f = open(fileName, 'r')
     except IOError:
-        print "Error: File does not appear to exist."
+        print("Error: File does not appear to exist.")
         sys.exit(1)
     
     pickHistory = []
     reader = csv.reader(f)
 
     # fill up the participants variable with the first row of the CSV file
-    participants = reader.next()
-    del participants[0]             # get rid of first column
+    participants = next(reader)
+    del participants[0]             # get rid of first column (year)
 
     # make sure participants are in a family
     # helps with typos
-    need_to_die = False
     for dude in participants:
         if not verify_name(dude):
-            need_to_die = True
-            print dude, 'is not in familys.csv or the extraName.csv'
-    if need_to_die:
-        sys.exit(1)
+            print(dude, 'is not in familys.csv or extraNames.csv')
+            sys.exit(1)
 
     # read in whole history file
     for line in reader:
@@ -215,32 +230,25 @@ if __name__ == '__main__':
             pickHistory.append(line)
     f.close()
 
+    # delete first col (year)
+    for line in pickHistory:
+        del(line[0])
+
     # truncate the history to the number of years requested
     while len(pickHistory) > num_years:
         del pickHistory[0]
 
-    # make dictionary of empty arrays
-    for dude in participants:
-        previous_years[dude] = []
-
-    # fill up the previous years dictionary
-    for line in pickHistory:
-        del line[0]                 # get rid of first column
-        i = 0
-        debug_fine("")
-        for dude in line:
-            if not verify_name(dude):
-                print dude, 'in file', fileName, 'is an illegal name'
-                sys.exit(1)
-            previous_years[participants[i]].append(dude)
-            debug_fine("%s = %s" % (participants[i], dude))
-            i = i + 1
+    previous_years = makePreviousYears(participants, pickHistory)
 
     num_tries = 1
     while len(chosen) != len(participants):
-        if num_tries > 10:
-            print "Need to try again or decrease the number of previous years"
-            sys.exit(1)
+        if num_tries > 100:
+            print("Decreasing the number of previous years to", len(pickHistory))
+            num_tries = 1
+            chosen = []
+            del pickHistory[0]
+            previous_years = makePreviousYears(participants, pickHistory)
+            #sys.exit(1)
             
         givers = possible_givers(participants, chosen)
         # if we omit randomization here, our "abort/retry" (below) may fail,
@@ -250,15 +258,14 @@ if __name__ == '__main__':
         recipients = possible_recipients(giver, participants, chosen, previous_years, families)
         # brute force abort/retry
         if len(recipients) == 0:
-            debug("No recipients, trying a different giver...")
+            debug("%s, No recipients, trying a different giver..." % giver)
+            num_tries += 1
             if len(givers) <= 1:
                 debug("No other givers to try! Starting over...")
                 chosen = []
-                num_tries += 1
             if len(givers) == 2:
                 debug("Stalemate! Two givers left but they can't give to eachother. Starting over...")
                 chosen = []
-                num_tries += 1
             continue
         recipient = random.choice(recipients)
         debug_fine("RECIPIENT: %s" % recipient)
@@ -281,7 +288,6 @@ if __name__ == '__main__':
     for dude in participants:
         for giver, recipient in chosen:
             if dude == giver:
-                print "%s gives to %s" % (giver, recipient)
+                print("%s gives to %s" % (giver, recipient))
         
     sys.exit(0)
-    
