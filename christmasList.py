@@ -175,7 +175,6 @@ def makePreviousYears(participants, pickHistory):
 
     return previous_years
 
-
 def print_usage():
     print('usage: ', sys.argv[0], ' <history_CSV_File> [#years]')
 
@@ -232,7 +231,7 @@ if __name__ == '__main__':
 
     # delete first col (year)
     for line in pickHistory:
-        del(line[0])
+        del line[0]
 
     # truncate the history to the number of years requested
     while len(pickHistory) > num_years:
