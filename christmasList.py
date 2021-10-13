@@ -20,6 +20,13 @@
 # Copyright (c)2010, Adam Monsen <haircut@gmail.com>
 # heavily modified by Don Shea <don@shea.cc>
 #
+# Usage:
+# christmasList.py <history.csv> [numYears]
+#    history.csv - history file used to exclude recent pairings.
+#    numYears(optional) - how many previous years to consider. Default
+#                         is 20 years in the history file and the program
+#                         ratchets down the years automatically.
+#
 # Rules:
 # 1. give to a different person than last year
 # 2. partners can't be nuclear family members
@@ -242,7 +249,7 @@ if __name__ == '__main__':
     num_tries = 1
     while len(chosen) != len(participants):
         if num_tries > 100:
-            print("Decreasing the number of previous years to", len(pickHistory))
+            print("Decreasing the number of previous years to", len(pickHistory)-1)
             num_tries = 1
             chosen = []
             del pickHistory[0]
@@ -283,7 +290,7 @@ if __name__ == '__main__':
     f.write(line)
     f.close()
 
-    # print out the pairs on the order of the columns of the CSV file
+    # print out the pairs in the order of the columns of the CSV file
     for dude in participants:
         for giver, recipient in chosen:
             if dude == giver:
