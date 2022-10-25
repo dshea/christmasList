@@ -227,7 +227,7 @@ if __name__ == '__main__':
     # helps with typos
     for dude in participants:
         if not verify_name(dude):
-            print(dude, 'is not in familys.csv or extraNames.csv')
+            print(dude, 'is not in families.csv or extraNames.csv')
             sys.exit(1)
 
     # read in whole history file
