@@ -11,6 +11,7 @@ Christmas gift exchange pairs.  I finally updated the Python code to Python 3.
 * can't choose yourself
 * participants give one gift only
 * participants receive one gift only
+* can't give to person giving to you
 
 # Get a copy of the git repository
 
