@@ -28,11 +28,12 @@
 #                         ratchets down the years automatically.
 #
 # Rules:
-# 1. give to a different person than last year
+# 1. give to a different person than last many years
 # 2. partners can't be nuclear family members
 # 3. can't choose yourself
 # 4. participants give one gift only
 # 5. participants receive one gift only
+# 6. can't give to same person giving to you
 #############
 
 #############
@@ -94,7 +95,7 @@ def possible_recipients(giver, participants, chosen, previous_years, families):
     # rule 3 - can't choose yourself
     possible_recipients.remove(giver)
 
-    # rule 1 - different pairing than the last few years
+    # rule 1 - give to a different person than last many years
     for dude in previous_years[giver]:
         if dude in possible_recipients:
             debug_fine("%s gave to %s last few years, excluding" % (giver, dude))
@@ -113,6 +114,14 @@ def possible_recipients(giver, participants, chosen, previous_years, families):
         if pair[1] in possible_recipients:
             debug_fine("%s is already paired, excluding" % pair[1])
             possible_recipients.remove(pair[1])
+
+    # rule 6 - can't give to same person giving to you
+    for pair in chosen:
+        if pair[1] == giver:
+            if pair[0] in possible_recipients:
+                debug_fine("%s is giving to %s, excluding" % (pair[0], giver))
+                possible_recipients.remove(pair[0])
+                break
 
     return possible_recipients
 
