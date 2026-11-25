@@ -26,7 +26,7 @@ directory "christmasList"
 
 ```
 cd christmasList
-./christmasList.py adult.csv
+./christmasList.py history.csv
 ```
 
 This will select new parings and add them to the end of the history(adult.csv)
